@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-    SQLHENV hEnv;
+    SQLHENV hEnv; 
     SQLHDBC hDbc;
     SQLRETURN ret;
 
@@ -23,29 +23,34 @@ int main() {
     // Conectarse a la base de datos
     ret = SQLConnect(hDbc, (SQLWCHAR*)L"sqlserver", SQL_NTS, (SQLWCHAR*)L"Username", SQL_NTS, (SQLWCHAR*)L"Password", SQL_NTS);
 
-    if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
+    if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) { // Operador logico OR
         cout << "Conectado a la base de datos exitosamente." << endl;
-
+       
         // Ejemplo de ejecución de una consulta
-        SQLHSTMT hStmt;
-        ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
-
+        SQLHSTMT hStmt; //Statement
+        ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt); //
+        cout << "+-----------------------------------------+" << endl;
+        cout << "|No. Empleado " << "| Nombre " << "| Apellido Paterno |" << endl;
         // Ejemplo de consulta SELECT
         ret = SQLExecDirect(hStmt, (SQLWCHAR*)L"SELECT * FROM Datos_Empleados", SQL_NTS);
         if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
-            SQLCHAR name[255];
-            SQLCHAR last_name[255];
-            int ID;
+            int num_empleado;
+            SQLCHAR name[50];
+            SQLCHAR last_name[50];            
             while (SQLFetch(hStmt) == SQL_SUCCESS) {
-                SQLGetData(hStmt, 1, SQL_C_LONG, &ID, 0, NULL);
+                SQLGetData(hStmt, 1, SQL_C_LONG, &num_empleado, 0, NULL);
                 SQLGetData(hStmt, 2, SQL_C_CHAR, name, sizeof(name), NULL);
-                SQLGetData(hStmt, 3, SQL_C_CHAR, last_name, sizeof(name), NULL);
-                cout << "ID: " << ID << ", Name: " << name << ", Lastname: " << last_name << endl;
+                SQLGetData(hStmt, 3, SQL_C_CHAR, last_name, sizeof(last_name), NULL);
+                
+               
+                cout << "|     " <<num_empleado << "         " << name << "        "<< last_name << endl;
             }
         }
 
-        // Liberar el gestor de conexion 
+        // Liberar el manejador de conexion 
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+
+        
     }
     else {
         cout << "Fallo la conexion a la base de datos" << endl;
