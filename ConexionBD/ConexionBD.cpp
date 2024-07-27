@@ -40,19 +40,18 @@ int main() {
                 SQLGetData(hStmt, 1, SQL_C_LONG, &ID, 0, NULL);
                 SQLGetData(hStmt, 2, SQL_C_CHAR, name, sizeof(name), NULL);
                 SQLGetData(hStmt, 3, SQL_C_CHAR, last_name, sizeof(name), NULL);
-               // SQLGetData(hStmt, 2, SQL_C_LONG, &age, 0, NULL);
                 cout << "ID: " << ID << ", Name: " << name << ", Lastname: " << last_name << endl;
             }
         }
 
-        // Liberar el manejador de conexion 
+        // Liberar el gestor de conexion 
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
     }
     else {
         cout << "Fallo la conexion a la base de datos" << endl;
     }
 
-    // Desconectar y liberar manejadores
+    // Desconectar y liberar gestores de entorno
     SQLDisconnect(hDbc);
     SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
     SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
