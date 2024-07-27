@@ -13,24 +13,24 @@ int main() {
     SQLHDBC hDbc;
     SQLRETURN ret;
 
-    // Allocate an environment handle
+    // Asignar un gestor de entorno
     ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv);
     ret = SQLSetEnvAttr(hEnv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
 
-    // Allocate a connection handle
+    // Asignar un gestor de conexión
     ret = SQLAllocHandle(SQL_HANDLE_DBC, hEnv, &hDbc);
 
-    // Connect to the database
+    // Conectarse a la base de datos
     ret = SQLConnect(hDbc, (SQLWCHAR*)L"sqlserver", SQL_NTS, (SQLWCHAR*)L"Username", SQL_NTS, (SQLWCHAR*)L"Password", SQL_NTS);
 
     if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
-        cout << "Connected to database successfully." << endl;
+        cout << "Conectado a la base de datos exitosamente." << endl;
 
-        // Example of executing a query
+        // Ejemplo de ejecución de una consulta
         SQLHSTMT hStmt;
         ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
 
-        // Example SELECT query
+        // Ejemplo de consulta SELECT
         ret = SQLExecDirect(hStmt, (SQLWCHAR*)L"SELECT * FROM Datos_Empleados", SQL_NTS);
         if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
             SQLCHAR name[255];
@@ -45,14 +45,14 @@ int main() {
             }
         }
 
-        // Free statement handle
+        // Liberar el manejador de conexion 
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
     }
     else {
-        cout << "Failed to connect to database." << endl;
+        cout << "Fallo la conexion a la base de datos" << endl;
     }
 
-    // Disconnect and free handles
+    // Desconectar y liberar manejadores
     SQLDisconnect(hDbc);
     SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
     SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
