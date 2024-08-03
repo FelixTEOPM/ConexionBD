@@ -5,11 +5,12 @@
 #include <sql.h>
 #include <sqlext.h>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 int main() {
-    SQLHENV hEnv; 
+    SQLHENV hEnv;
     SQLHDBC hDbc;
     SQLRETURN ret;
 
@@ -23,34 +24,44 @@ int main() {
     // Conectarse a la base de datos
     ret = SQLConnect(hDbc, (SQLWCHAR*)L"sqlserver", SQL_NTS, (SQLWCHAR*)L"Username", SQL_NTS, (SQLWCHAR*)L"Password", SQL_NTS);
 
-    if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) { // Operador logico OR
+    if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
         cout << "Conectado a la base de datos exitosamente." << endl;
-       
+
         // Ejemplo de ejecución de una consulta
-        SQLHSTMT hStmt; //Statement
-        ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt); //
-        cout << "+-----------------------------------------+" << endl;
-        cout << "|No. Empleado " << "| Nombre " << "| Apellido Paterno |" << endl;
+        SQLHSTMT hStmt;
+        ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
+
+        // Imprimir encabezados de la tabla
+        cout << "+---------------+-------------------+---------------------+---------------------+" << endl;
+        cout << "| No. Empleado  | Nombre            | Apellido Paterno    | Apellido Materno    |" << endl;
+        cout << "+---------------+-------------------+---------------------+---------------------+" << endl;
+
         // Ejemplo de consulta SELECT
         ret = SQLExecDirect(hStmt, (SQLWCHAR*)L"SELECT * FROM Datos_Empleados", SQL_NTS);
         if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
             int num_empleado;
             SQLCHAR name[50];
-            SQLCHAR last_name[50];            
+            SQLCHAR last_name[50];
+            SQLCHAR slast_name[50];
             while (SQLFetch(hStmt) == SQL_SUCCESS) {
                 SQLGetData(hStmt, 1, SQL_C_LONG, &num_empleado, 0, NULL);
                 SQLGetData(hStmt, 2, SQL_C_CHAR, name, sizeof(name), NULL);
                 SQLGetData(hStmt, 3, SQL_C_CHAR, last_name, sizeof(last_name), NULL);
-                
-               
-                cout << "|     " <<num_empleado << "         " << name << "        "<< last_name << endl;
+                SQLGetData(hStmt, 4, SQL_C_CHAR, slast_name, sizeof(slast_name), NULL);
+
+                // Imprimir datos de la fila con alineación
+                cout << "| " << setw(14) << left << num_empleado
+                    << "| " << setw(18) << left << name
+                    << "| " << setw(20) << left << last_name
+                    << "| " << setw(19) << left << slast_name << " |" << endl;
             }
         }
 
-        // Liberar el manejador de conexion 
-        SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+        // Imprimir línea final de la tabla
+        cout << "+---------------+-------------------+---------------------+---------------------+" << endl;
 
-        
+        // Liberar el manejador de conexión
+        SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
     }
     else {
         cout << "Fallo la conexion a la base de datos" << endl;
@@ -63,3 +74,6 @@ int main() {
 
     return 0;
 }
+
+
+
